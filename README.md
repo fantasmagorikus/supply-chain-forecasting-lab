@@ -4,6 +4,7 @@ CLI-first demand forecasting with Prophet and a reproducible evaluation flow. Bu
 
 ## Contents
 - [What I Built & Why](#what-i-built--why)
+- [Decisions & Tradeoffs](#decisions--tradeoffs)
 - [Architecture & Flow](#architecture--flow)
 - [Components & Versions](#components--versions)
 - [Runbook (Setup -> Generate -> Forecast)](#runbook-setup---generate---forecast)
@@ -15,6 +16,11 @@ CLI-first demand forecasting with Prophet and a reproducible evaluation flow. Bu
 - **Forecasting pipeline**: Prophet-based demand forecasting with holdout evaluation (MAE/MAPE).
 - **Automation-first CLI**: reproducible runs without notebooks; easy to wire into schedulers.
 - **n8n orchestration**: workflow triggers CLI while keeping business logic in Python.
+
+## Decisions & Tradeoffs
+- **Prophet** for fast, interpretable forecasting; tradeoff is lower flexibility than deep models.
+- **CLI-first** instead of notebooks to favor automation; tradeoff is less interactive exploration.
+- **Synthetic data** for repeatability; tradeoff is less realism vs production data.
 
 ## Architecture & Flow
 ```
@@ -53,6 +59,8 @@ CSV input -> Prophet fit -> Forecast + metrics -> PNG plot + CSV outputs
    ```
 
 ## Results & Evidence
+- 730-day synthetic series with a 60-day holdout evaluation (MAE/MAPE printed during run).
+- Outputs: `outputs/forecast.csv` and `outputs/forecast.png`.
 - Forecast plot (example output):
 
 ![Forecast Output](docs/screenshots/forecast.png)

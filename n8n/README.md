@@ -1,10 +1,10 @@
-# n8n Orchestration (Project 1)
+# n8n Orchestration (Supply Chain Forecasting Lab)
 
 This workflow runs the Supply Chain Watchtower CLI on the host from n8n in Docker via SSH.
 
 ## 1) Start n8n (Docker)
 ```bash
-REPO_ROOT="/path/to/project-1-supply-chain-watchtower"
+REPO_ROOT="/path/to/supply-chain-forecasting-lab"
 
 docker run --rm -it --name n8n -p 5678:5678 \
   --add-host=host.docker.internal:host-gateway \

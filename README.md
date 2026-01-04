@@ -1,17 +1,35 @@
-# Project 1: Supply Chain Watchtower
+# Supply Chain Forecasting Lab
 
-Forecast demand time series with Prophet. n8n should only trigger the CLI; all logic stays in Python.
+CLI-first demand forecasting with Prophet and a reproducible evaluation flow. Built to show automation readiness (CLI + n8n) and measurable forecast quality.
 
-## Layout
-- `data/`: input CSVs and synthetic data.
-- `outputs/`: forecast plots and exported forecasts.
-- `watchtower/`: Python module (forecasting utilities).
-- `main.py`: CLI entry point.
+## Contents
+- [What I Built & Why](#what-i-built--why)
+- [Architecture & Flow](#architecture--flow)
+- [Components & Versions](#components--versions)
+- [Runbook (Setup -> Generate -> Forecast)](#runbook-setup---generate---forecast)
+- [Results & Evidence](#results--evidence)
+- [Project Layout](#project-layout)
+- [Notes](#notes)
 
-## Setup
+## What I Built & Why
+- **Forecasting pipeline**: Prophet-based demand forecasting with holdout evaluation (MAE/MAPE).
+- **Automation-first CLI**: reproducible runs without notebooks; easy to wire into schedulers.
+- **n8n orchestration**: workflow triggers CLI while keeping business logic in Python.
+
+## Architecture & Flow
+```
+CSV input -> Prophet fit -> Forecast + metrics -> PNG plot + CSV outputs
+```
+
+## Components & Versions
+- Python 3.x
+- Prophet, pandas, numpy, matplotlib
+- n8n (optional orchestration)
+
+## Runbook (Setup -> Generate -> Forecast)
 1) Create a virtualenv:
    ```bash
-   cd /path/to/project-1-supply-chain-watchtower
+   cd /path/to/supply-chain-forecasting-lab
    python3 -m venv .venv
    source .venv/bin/activate
    ```
@@ -20,24 +38,31 @@ Forecast demand time series with Prophet. n8n should only trigger the CLI; all l
    python -c "import prophet" || pip install -r requirements.txt
    python -c "import pandas, numpy, matplotlib"
    ```
+3) Generate synthetic data:
+   ```bash
+   python main.py generate --out-path data/synthetic_demand.csv --start-date 2023-01-01 --periods 730 --freq D
+   ```
+4) Run forecast + evaluation:
+   ```bash
+   python main.py forecast \
+     --data-path data/synthetic_demand.csv \
+     --horizon 30 \
+     --test-periods 60 \
+     --plot-path outputs/forecast.png \
+     --out-forecast outputs/forecast.csv
+   ```
 
-## Generate synthetic data
-```bash
-python main.py generate --out-path data/synthetic_demand.csv --start-date 2023-01-01 --periods 730 --freq D
-```
+## Results & Evidence
+- Forecast plot (example output):
 
-## Run forecast + evaluation
-```bash
-python main.py forecast \
-  --data-path data/synthetic_demand.csv \
-  --horizon 30 \
-  --test-periods 60 \
-  --plot-path outputs/forecast.png \
-  --out-forecast outputs/forecast.csv
-```
+![Forecast Output](docs/screenshots/forecast.png)
 
-## n8n Orchestration
-See `n8n/README.md` and import `n8n/watchtower_orchestration.json`.
+## Project Layout
+- `data/`: input CSVs and synthetic data.
+- `outputs/`: forecast plots and exported forecasts.
+- `watchtower/`: forecasting utilities.
+- `main.py`: CLI entry point.
+- `n8n/`: workflow and runbook.
 
 ## Notes
 - Input CSV expects `ds` (date) and `y` (value). If yours differ, pass `--date-col` and `--value-col`.

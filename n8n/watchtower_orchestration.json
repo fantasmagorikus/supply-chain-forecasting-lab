@@ -1,0 +1,60 @@
+{
+  "name": "Watchtower Orchestration",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "command": "bash -lc 'cd /path/to/project-1-supply-chain-watchtower && source .venv/bin/activate && python main.py generate --out-path data/synthetic_demand.csv --start-date 2023-01-01 --periods 730 --freq D'"
+      },
+      "id": "2",
+      "name": "Generate Synthetic Demand",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [560, 300]
+    },
+    {
+      "parameters": {
+        "command": "bash -lc 'cd /path/to/project-1-supply-chain-watchtower && source .venv/bin/activate && python main.py forecast --data-path data/synthetic_demand.csv --horizon 30 --test-periods 60 --plot-path outputs/forecast.png --out-forecast outputs/forecast.csv'"
+      },
+      "id": "3",
+      "name": "Run Forecast",
+      "type": "n8n-nodes-base.ssh",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate Synthetic Demand",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Synthetic Demand": {
+      "main": [
+        [
+          {
+            "node": "Run Forecast",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1"
+}
